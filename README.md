@@ -18,16 +18,17 @@ Interactive 3D chatbots represent the cutting edge of human-computer interaction
 ## **Step 1: Setting Up the Development Environment**
 
 ### **Install Required Libraries**
-To get started, install the required Python libraries:
+Before you begin, set up the environment by installing the necessary libraries:
 
 ```bash
-pip install openai pygltflib pygame vrm
+pip install openai pygltflib pygame vrm pyttsx3
 ```
 
 - **`openai`:** To integrate ChatGPT for conversation.
 - **`pygltflib`:** To load, modify, and save 3D glTF models.
 - **`pygame`:** To create a simple window for rendering animations.
 - **`vrm`:** To work with VRM models for advanced character interactions.
+- **`pyttsx3`:** For text-to-speech functionality to enhance interactivity.
 
 ---
 
@@ -40,42 +41,62 @@ Find a suitable 3D model from online resources like:
 - [**Turbosquid**](https://www.turbosquid.com/)
 
 ### **File Formats**
-- **glTF/GLB:** Supports animations and is lightweight.
-- **VRM:** Best for Vtuber-style characters with predefined expressions.
+- **glTF/GLB:** Ideal for animations due to its lightweight nature.
+- **VRM:** Perfect for Vtuber-style characters with predefined expressions.
+
+Download your chosen model and ensure it's in one of the supported formats.
 
 ---
 
 ## **Step 3: Accessing ChatGPT**
 
-Sign up at [OpenAI](https://openai.com/) to obtain your API key. Store it in an environment variable or `.env` file for security:
+Sign up at [OpenAI](https://openai.com/) to obtain your API key. Store it securely in an environment variable or `.env` file. Here's an example of `.env` configuration:
+
+```env
+OPENAI_API_KEY=your-api-key
+```
+
+Install `python-dotenv` to load the API key securely:
 
 ```bash
-export OPENAI_API_KEY="your-api-key"
+pip install python-dotenv
+```
+
+### **Code to Load the API Key**
+
+```python
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 ```
 
 ---
 
 ## **Step 4: Building the Core Chatbot Application**
 
-### **Basic Structure**
-
-Here's how to build the core application:
+### **Code Implementation**
+Create a Python script to handle the chatbot's core functionalities. This script includes ChatGPT integration, loading the 3D model, and user input handling.
 
 ```python
 import openai
 import pygltflib
 import pygame
+from dotenv import load_dotenv
+import os
 
-# Initialize OpenAI API
-openai.api_key = "your-api-key"
+# Load environment variables
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("3D Chatbot")
 
 # Load 3D model (glTF format)
-model = pygltflib.GLTF2()
-model.load_file("character_model.glb")
+model = pygltflib.GLTF2().load("character_model.glb")
 
 # Function to interact with ChatGPT
 def get_chat_response(user_input):
@@ -84,21 +105,21 @@ def get_chat_response(user_input):
         prompt=user_input,
         max_tokens=150,
         n=1,
+        stop=None,
         temperature=0.7
     )
     return response.choices[0].text.strip()
 
-# Main loop
+# Main event loop
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                user_input = input("You: ")
-                chatbot_response = get_chat_response(user_input)
-                print(f"Chatbot: {chatbot_response}")
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            user_input = input("You: ")
+            chatbot_response = get_chat_response(user_input)
+            print(f"Chatbot: {chatbot_response}")
 
 pygame.quit()
 ```
@@ -108,7 +129,7 @@ pygame.quit()
 ## **Step 5: Mapping ChatGPT Responses to Animations**
 
 ### **Analyze the AI Response**
-Use NLP techniques like sentiment analysis to determine the appropriate animation for the chatbot's response.
+This section uses sentiment analysis to determine the appropriate animations for responses.
 
 ```python
 def analyze_response(response):
@@ -121,57 +142,116 @@ def analyze_response(response):
 ```
 
 ### **Update Animations**
-Integrate `pygltflib` to update the model's animation data:
+Apply the animation dynamically to the 3D model:
 
 ```python
 def apply_animation(animation_type):
+    # Example: Update model node properties for specific animations
     if animation_type == "wave":
         arm_node = next((node for node in model.nodes if node.name == "RightArm"), None)
         if arm_node:
             arm_node.rotation = [0, 0.5, 0, 1]  # Example rotation
+    elif animation_type == "smile":
+        mouth_node = next((node for node in model.nodes if node.name == "Mouth"), None)
+        if mouth_node:
+            mouth_node.scale = [1.2, 1.2, 1.2]
 ```
 
 ---
 
 ## **Step 6: Adding Lip Sync**
 
-### **Generate Speech Audio**
-Use a library like `pyttsx3` or Google Text-to-Speech (gTTS) to convert text to audio.
+### **Text-to-Speech**
+Generate speech using `pyttsx3`:
 
 ```python
-from gtts import gTTS
-import os
+import pyttsx3
 
 def generate_speech(text):
-    tts = gTTS(text)
-    tts.save("speech.mp3")
-    os.system("mpg123 speech.mp3")
-```
-
-### **Sync Mouth Movement**
-Map phonemes to blend shapes or bones in the model for realistic mouth movements.
-
-```python
-def sync_mouth(phonemes):
-    mouth_node = next((node for node in model.nodes if node.name == "Mouth"), None)
-    if mouth_node and "A" in phonemes:
-        mouth_node.scale = [1.2, 1.2, 1.2]  # Simplified example
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
 ```
 
 ---
 
 ## **Step 7: Rendering the 3D Character**
 
-### **Set Up a Render Loop**
-Use Pygame to render the 3D character.
+### **Setup Rendering**
+Use `pygame` to display the rendered 3D model.
 
 ```python
 def render():
-    # Add rendering logic here (e.g., use a 3D engine or library)
-    pass
+    # Placeholder for rendering logic
+    screen.fill((0, 0, 0))  # Clear the screen
+    pygame.display.flip()  # Update display
+```
+
+Integrate the `render` function into the main loop.
+
+---
+
+## **Frontend Implementation**
+
+For a web-based frontend, you can use Flask or Django along with Three.js for rendering 3D models. Below is a simple Flask setup:
+
+### **Flask App**
+
+```python
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+### **HTML Template (`templates/index.html`)**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Chatbot</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+</head>
+<body>
+    <div id="chatbot-container"></div>
+    <script>
+        // Placeholder for Three.js rendering logic
+    </script>
+</body>
+</html>
 ```
 
 ---
+
+## **File Structure**
+
+```
+3D-Chatbot/
+│
+├── app.py              # Flask server
+├── chatbot.py          # Core chatbot logic
+├── models/
+│   └── character_model.glb  # 3D character model
+├── static/
+│   ├── js/
+│   │   └── main.js      # JavaScript for Three.js rendering
+│   └── css/
+│       └── styles.css   # Optional CSS
+├── templates/
+│   └── index.html       # Frontend HTML template
+└── requirements.txt     # Dependencies
+```
+
+
 
 ## **Step 8: Testing and Refinement**
 
@@ -190,5 +270,4 @@ def render():
 ---
 
 ## **Conclusion**
-
 By following these steps, you can build an interactive 3D chatbot powered by ChatGPT. This system is perfect for creating Vtuber assistants, interactive virtual worlds, and educational tools. Start building, and let your imagination bring characters to life!
