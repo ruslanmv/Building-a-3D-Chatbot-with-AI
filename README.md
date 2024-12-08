@@ -253,20 +253,182 @@ if __name__ == "__main__":
 
 
 
-## **Step 8: Testing and Refinement**
-
+### **Step 8: Testing and Refinement**
 1. **Interaction:** Ensure ChatGPT accurately responds to user input.
 2. **Animation:** Verify smooth transitions between animations.
 3. **Lip Sync:** Test alignment of mouth movements with speech.
 
+Refining and testing the chatbot involves three critical aspects: ensuring ChatGPT responds correctly, verifying animations, and testing the alignment of lip sync with speech output.
+
 ---
 
-## **Advanced Features (Optional)**
+#### **Interaction: Ensure ChatGPT Accurately Responds to User Input**
 
+Test the interaction loop for ChatGPT to ensure the AI is producing meaningful and relevant responses. Use a sample conversation flow and validate the outputs.
+
+```python
+def test_chat_response():
+    test_inputs = [
+        "What is your name?",
+        "Tell me a joke.",
+        "Can you describe a happy moment?",
+    ]
+    
+    for user_input in test_inputs:
+        response = get_chat_response(user_input)
+        print(f"User: {user_input}")
+        print(f"ChatGPT: {response}\n")
+
+# Run the test
+test_chat_response()
+```
+
+Ensure the responses are coherent and contextually relevant. If issues arise, adjust the prompt engineering in the `get_chat_response` function.
+
+---
+
+#### **Animation: Verify Smooth Transitions Between Animations**
+
+Smooth animation transitions require blending between animation states. Using the `pygltflib` library, implement a test for checking transitions.
+
+```python
+def test_animation_transitions():
+    animations = ["neutral", "wave", "smile"]
+    
+    for anim in animations:
+        print(f"Applying animation: {anim}")
+        apply_animation(anim)
+        # Simulate a delay for visualization (use rendering in a real test)
+        import time
+        time.sleep(2)
+
+# Run the test
+test_animation_transitions()
+```
+
+Monitor the transition to verify that the animations are smooth and logical. Debug any abrupt changes in the `apply_animation` function.
+
+---
+
+#### **Lip Sync: Test Alignment of Mouth Movements with Speech**
+
+Test lip sync by comparing the audio output and mouth movements for a given text input.
+
+```python
+def test_lip_sync():
+    test_phrases = [
+        "Hello, how are you?",
+        "I am a 3D chatbot.",
+        "Let’s test lip sync now."
+    ]
+    
+    for phrase in test_phrases:
+        print(f"Testing phrase: {phrase}")
+        generate_speech(phrase)
+        phonemes = ["A", "E", "I", "O", "U"]  # Simplified example
+        sync_mouth(phonemes)
+        import time
+        time.sleep(3)
+
+# Run the test
+test_lip_sync()
+```
+
+Validate that the mouth animations are consistent with the generated speech. Adjust phoneme mapping if needed.
+
+---
+
+### **Advanced Features (Optional)**
 - **Emotion Detection:** Use Hugging Face's Transformers for advanced sentiment analysis.
 - **Interactive Environments:** Add a 3D scene with props using `three.js` or Blender.
 - **Customization:** Allow users to customize the character's appearance and personality.
+#### **Emotion Detection: Use Hugging Face's Transformers for Advanced Sentiment Analysis**
 
+Incorporate a pre-trained model from Hugging Face for detailed sentiment analysis and emotion detection.
+
+```python
+from transformers import pipeline
+
+# Load sentiment analysis pipeline
+sentiment_analyzer = pipeline("sentiment-analysis")
+
+def detect_emotion(response):
+    analysis = sentiment_analyzer(response)
+    sentiment = analysis[0]["label"]
+    score = analysis[0]["score"]
+    print(f"Detected Sentiment: {sentiment} (Confidence: {score:.2f})")
+    return sentiment
+
+# Test emotion detection
+response = "I am so happy to see you!"
+emotion = detect_emotion(response)
+print(f"Emotion detected: {emotion}")
+```
+
+Use the detected emotions to enhance animations or trigger specific behaviors.
+
+---
+
+#### **Interactive Environments: Add a 3D Scene with Props Using Three.js or Blender**
+
+For an immersive experience, incorporate a dynamic 3D environment. Example with `three.js`:
+
+```html
+<!-- Include a 3D environment with Three.js -->
+<div id="scene-container"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    camera.position.z = 5;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        renderer.render(scene, camera);
+    }
+    animate();
+</script>
+```
+
+This example creates a simple rotating cube. Replace it with more complex models and props for a fully interactive environment.
+
+---
+
+#### **Customization: Allow Users to Customize the Character's Appearance and Personality**
+
+Provide options to modify the character’s visual attributes or conversational style dynamically. Example:
+
+```python
+def customize_character(color="blue", personality="friendly"):
+    # Customize color
+    if color == "blue":
+        print("Applying blue color to the character.")
+        # Apply customization logic (e.g., change texture in glTF model)
+    # Customize personality
+    if personality == "friendly":
+        print("Setting chatbot personality to friendly.")
+        # Adjust response style in ChatGPT prompt
+
+# Test customization
+customize_character(color="red", personality="humorous")
+```
+
+Use sliders, dropdowns, or input fields in the frontend to capture user preferences and apply them to the character.
+
+---
+
+By incorporating these testing routines and advanced features, you ensure the 3D chatbot is robust, interactive, and engaging for users.
 ---
 
 ## **Conclusion**
