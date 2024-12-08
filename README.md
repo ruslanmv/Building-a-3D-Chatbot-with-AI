@@ -425,10 +425,8 @@ customize_character(color="red", personality="humorous")
 ```
 
 Use sliders, dropdowns, or input fields in the frontend to capture user preferences and apply them to the character.
-
----
-
 By incorporating these testing routines and advanced features, you ensure the 3D chatbot is robust, interactive, and engaging for users.
+
 ---
 
 ## **Conclusion**
