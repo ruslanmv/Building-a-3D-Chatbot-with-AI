@@ -1,4 +1,4 @@
-# Building a 3D Chatbot with AI: Step-by-Step Tutorial
+# Building a 3D Chatbot with AI
 
 Interactive 3D chatbots represent the cutting edge of human-computer interaction. Combining 3D modeling, animation, and AI-driven conversation, these chatbots bring a new dimension to communication. This tutorial walks you through the entire process of building a 3D chatbot that integrates ChatGPT and brings your characters to life with real-time animations and lip sync.
 
